@@ -9,7 +9,6 @@ import ProjectCard from '@/components/ProjectCard.vue';
     <div id="page-container" class="max-w-5xl w-full">
       <div class="flex flex-row flex-wrap gap-10 justify-center">
         <ProjectCard name="Cyber Dice" link="/cyber-dice" />
-        <ProjectCard name="Cyber Mail" link="/" />
       </div>
     </div>
   </main>
