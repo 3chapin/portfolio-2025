@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
 	plugins: [vue(), vueDevTools(), tailwindcss()],
 
-	base: '/portfolio-2025/',
+	base: '/',
 
 	optimizeDeps: {
 		include: ['number-flow'],
