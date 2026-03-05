@@ -10,6 +10,8 @@ import PlusIcon from './icons/PlusIcon.vue'
 import BackArrow from './icons/BackArrow.vue'
 import DrawerComponent from './DrawerComponent.vue'
 import { isMobile } from '@/composables/navigator'
+import NextRoundScreen from './NextRoundScreen.vue'
+import GameOverScreen from './GameOverScreen.vue'
 
 const isMobileDevice = isMobile.value
 
@@ -19,6 +21,27 @@ type Player = {
 	score: number
 	out: boolean
 }
+
+// just used for testing
+const defaultPlayers = ref<Player[]>([
+	{ id: 1, name: 'Kevin', score: 0, out: false },
+	{ id: 2, name: 'Carol', score: 0, out: false },
+	{ id: 3, name: 'Jacob', score: 0, out: false },
+	{ id: 4, name: 'Jenny', score: 0, out: false },
+	{ id: 5, name: 'Joseph', score: 0, out: false },
+	{ id: 6, name: 'Sarah', score: 0, out: false },
+	{ id: 7, name: 'Bryce', score: 0, out: false },
+	{ id: 8, name: 'Jonathan', score: 0, out: false },
+	{ id: 9, name: 'Jennifer', score: 0, out: false },
+	{ id: 10, name: 'Ben', score: 0, out: false },
+	{ id: 11, name: 'Holly', score: 0, out: false },
+	{ id: 12, name: 'Dave', score: 0, out: false },
+	{ id: 13, name: 'Kirsten', score: 0, out: false },
+	{ id: 14, name: 'Michael', score: 0, out: false },
+	{ id: 15, name: 'Hannah', score: 0, out: false },
+	{ id: 16, name: 'Sasha', score: 0, out: false },
+	{ id: 17, name: 'Jared', score: 0, out: false },
+])
 
 type GameData = {
 	setupStep: number
@@ -34,7 +57,11 @@ type GameData = {
 
 const defaultGameData: GameData = {
 	setupStep: 1,
-	players: [] as Player[],
+
+	// Just used for testing
+	players: defaultPlayers.value,
+
+	// players: [] as Player[],
 	totalRounds: 20,
 	started: false,
 	gameOver: false,
@@ -56,8 +83,22 @@ const currentPlayerFullIndex = computed(() => {
 	)
 })
 
-const playersSortedByScore = computed<Player[]>(() => {
-	return [...gameData.value.players].sort((a, b) => b.score - a.score)
+// const playersSortedByScore = computed<Player[]>(() => {
+// 	return [...gameData.value.players].sort((a, b) => b.score - a.score)
+// })
+
+const playerRankings = computed(() => {
+	const sorted = [...gameData.value.players].sort((a, b) => b.score - a.score)
+	let lastScore: number | null = null
+	let lastRank = 0
+
+	return sorted.map((player, idx) => {
+		if (player.score !== lastScore) {
+			lastRank = idx + 1
+			lastScore = player.score
+		}
+		return { ...player, rank: lastRank }
+	})
 })
 
 const playersSortedByStatus = computed<Player[]>(() => {
@@ -80,6 +121,8 @@ const playerList = ref<HTMLElement | null>(null)
 const drawerOpen = ref(false)
 
 const drawerType = ref<string>('')
+
+const showTransition = ref<boolean>(false)
 
 const openDrawer = (type: string) => {
 	if (drawerOpen.value === true && drawerType.value !== type) {
@@ -131,6 +174,7 @@ const removePlayer = (id: number) => {
 	if (index !== -1) {
 		gameData.value.players.splice(index, 1)
 	}
+	focusInput()
 }
 
 const advanceStep = () => {
@@ -146,19 +190,54 @@ const chooseRounds = (number: number) => {
 }
 
 const startGame = () => {
-	gameData.value.started = true
-	if (
-		gameData.value.players.length > 0 &&
-		gameData.value.players[0] !== undefined
-	) {
-		gameData.value.currentPlayerId = gameData.value.players[0].id
-	}
+	animateNextRound()
+
+	setTimeout(() => {
+		gameData.value.started = true
+		if (
+			gameData.value.players.length > 0 &&
+			gameData.value.players[0] !== undefined
+		) {
+			gameData.value.currentPlayerId = gameData.value.players[0].id
+		}
+	}, 200)
 }
 
 const quitGame = () => {
 	gameData.value = defaultGameData
 	localStorage.removeItem('gameData')
 	router.push('/')
+}
+
+const restartGame = () => {
+	animateNextRound()
+
+	setTimeout(() => {
+		gameData.value.currentPlayerId = gameData.value.players[0]?.id || null
+		gameData.value.currentRound = 1
+		gameData.value.currentRoundRolls = []
+		gameData.value.currentScore = 0
+		gameData.value.gameOver = false
+		gameData.value.started = true
+		gameData.value.players.forEach((p) => {
+			p.score = 0
+			p.out = false
+		})
+	}, 200)
+}
+
+const goBackToSetup = () => {
+	gameData.value.setupStep = 1
+	gameData.value.currentPlayerId = gameData.value.players[0]?.id || null
+	gameData.value.currentRound = 1
+	gameData.value.currentRoundRolls = []
+	gameData.value.currentScore = 0
+	gameData.value.gameOver = false
+	gameData.value.started = false
+	gameData.value.players.forEach((p) => {
+		p.score = 0
+		p.out = false
+	})
 }
 
 const markOut = (id: number) => {
@@ -188,6 +267,8 @@ const endRound = () => {
 	gameData.value.players.forEach((player) => {
 		player.out = false
 	})
+
+	setTimeout(animateNextRound, 250)
 }
 
 const animateBadSeven = () => {
@@ -195,12 +276,17 @@ const animateBadSeven = () => {
 	if (flashScreen) {
 		flashScreen.classList.add('red-flash')
 		setTimeout(() => flashScreen.classList.remove('red-flash'), 200)
-		const roundNumber = document.getElementById('round-number')
-		if (roundNumber) {
-			roundNumber.classList.add('animate-pulse')
-			setTimeout(() => roundNumber.classList.remove('animate-pulse'), 4100)
-		}
 	}
+}
+
+const animateNextRound = () => {
+	showTransition.value = true
+
+	closeDrawer()
+
+	setTimeout(() => {
+		showTransition.value = false
+	}, 1500)
 }
 
 const handleNumberButton = (value: number | string) => {
@@ -237,6 +323,7 @@ const handleNumberButton = (value: number | string) => {
 			} else {
 				//end Game
 				gameData.value.gameOver = true
+				showTransition.value = true
 			}
 		} else if (newRollValue === 'doubles') {
 			//double score - rolled doubles
@@ -295,6 +382,26 @@ onMounted(() => {
 		class="w-full max-w-100 justify-self-center h-dvh overflow-hidden py-2 px-6 pb-8 flex flex-col"
 	>
 		<div id="flash-overlay" class="z-60"></div>
+
+		<Transition name="slide-right">
+			<NextRoundScreen
+				v-if="showTransition && gameData.gameOver === false"
+				:current-round="gameData.currentRound"
+				:is-mobile-device
+			/>
+		</Transition>
+
+		<Transition name="slide-right">
+			<GameOverScreen
+				v-if="gameData.gameOver === true"
+				:player-rankings="playerRankings"
+				:is-mobile-device
+				@restart-game="restartGame"
+				@go-back-to-setup="goBackToSetup"
+				@quit-game="quitGame"
+			/>
+		</Transition>
+
 		<div
 			v-if="gameData.started"
 			id="cyber-dice-div"
@@ -349,14 +456,14 @@ onMounted(() => {
 						<transition-group>
 							<div
 								id="player-row"
-								v-for="(player, index) in playersSortedByScore"
+								v-for="(player, index) in playerRankings"
 								:key="player.id"
 								:class="index % 2 === 1 ? 'bg-gray-900/70' : ''"
 								class="flex flex-row rounded items-center min-h-14 max-h-14 mx-0.5 justify-between text-center px-3 transition-all duration-400"
 							>
 								<CyberText
 									text-margin="ml-[3px]"
-									:value="index + 1 + ' ' + player.name"
+									:value="player.rank + ' ' + player.name"
 								/>
 								<div
 									id="player-score-info"
@@ -366,13 +473,11 @@ onMounted(() => {
 										{{ player.score.toLocaleString() }}
 									</p>
 									<p
-										v-if="index !== 0 && playersSortedByScore[0]!.score !== 0"
+										v-if="index !== 0 && playerRankings[0]!.score !== 0"
 										class="text-gray-600 font-mono text-sm"
 									>
 										{{
-											(
-												player.score - playersSortedByScore[0]!.score
-											).toLocaleString()
+											(player.score - playerRankings[0]!.score).toLocaleString()
 										}}
 									</p>
 								</div>
@@ -488,12 +593,31 @@ onMounted(() => {
 						</div>
 					</transition-group>
 				</div>
-				<div v-if="drawerType === 'options'" class="w-full max-w-85">
+				<div
+					v-if="drawerType === 'options'"
+					class="flex flex-col w-full pt-3 pb-6 max-w-85 gap-y-7"
+				>
+					<button
+						name="play-again"
+						@click="restartGame"
+						@touchstart="() => {}"
+						class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					>
+						Restart Game (Same Setup)
+					</button>
+					<button
+						name="back-to-setup"
+						@click="goBackToSetup"
+						@touchstart="() => {}"
+						class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					>
+						Restart Game (Change Setup)
+					</button>
 					<button
 						name="quit-game"
 						@click="quitGame"
 						@touchstart="() => {}"
-						class="mt-3 mb-6 font-semibold bg-gray-950 rounded w-full min-h-12 self-center font-mono cursor-pointer border-2 hover:bg-gray-800 active:border-2border-red-400 text-red-400 active:border-red-400 active:ring-red-400 active:ring-2"
+						class="font-semibold bg-gray-950 rounded w-full min-h-12 self-center font-mono cursor-pointer border-2 hover:bg-gray-800 active:border-2border-red-400 text-red-400 active:border-red-400 active:ring-red-400 active:ring-2"
 					>
 						Quit Game
 					</button>
@@ -680,5 +804,26 @@ h3 {
 	pointer-events: none;
 	transition: opacity 0.2s ease-in-out;
 	visibility: visible;
+}
+
+.slide-right-enter-from {
+	transform: translateX(100%);
+}
+
+.slide-right-enter-to {
+	transform: translateX(0);
+}
+
+.slide-right-leave-from {
+	transform: translateX(0);
+}
+
+.slide-right-leave-to {
+	transform: translateX(-100%);
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+	transition: transform 300ms ease-out;
 }
 </style>
