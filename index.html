@@ -15,9 +15,33 @@
 				touch-action: none;
 			}
 		</style>
+		<!-- PWA Manifest -->
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="theme-color" content="#18181b" />
+		<!-- iOS support -->
+		<link rel="apple-touch-icon" href="/assets/mjlowell-icon-192.png" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta
+			name="apple-mobile-web-app-status-bar-style"
+			content="black-translucent"
+		/>
 	</head>
 	<body>
 		<div id="app" class="tracking-wide overflow-auto"></div>
 		<script type="module" src="/src/main.js"></script>
+
+		<!-- Register service worker for PWA -->
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker
+						.register('/service-worker.js')
+						.then((reg) => console.log('Service worker registered:', reg))
+						.catch((err) =>
+							console.error('Service worker registration failed:', err),
+						)
+				})
+			}
+		</script>
 	</body>
 </html>
