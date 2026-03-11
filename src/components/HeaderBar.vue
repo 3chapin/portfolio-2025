@@ -21,7 +21,7 @@
 							mjlowell
 						</p>
 						<p
-							class="col-start-1 row-start-1 ml-[3px] text-base font-mono p-4 text-fuchsia-400 animate-pulseHeader"
+							class="col-start-1 row-start-1 ml-[.75px] text-base font-mono p-4 text-fuchsia-400 animate-pulseHeader"
 						>
 							mjlowell
 						</p>

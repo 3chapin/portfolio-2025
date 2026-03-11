@@ -23,13 +23,14 @@ const handleClose = () => {
 	<div
 		id="overlay"
 		v-if="drawerOpen"
+		@click="handleClose"
 		class="w-screen h-[90dvh] z-30 bottom-0 fixed"
 	></div>
 
 	<div
 		id="drawer"
 		:class="[
-			`flex flex-col items-center p-6 fixed bottom-0 left-0 right-0 ${height} h-fit max-h-[65dvh] pt-2 pb-6 gap-y-2 bg-gray-950 border-t-3 border-gray-500 rounded-4xl transform transition-transform z-50 transition-discrete duration-300`,
+			`flex flex-col items-center p-6 fixed bottom-0 left-0 right-0 ${height} h-fit max-h-[60dvh] pt-2 pb-6 gap-y-2 bg-gray-950 border-t-3 border-gray-500 rounded-4xl transform transition-transform z-50 transition-discrete duration-300`,
 			{
 				'translate-y-0': drawerOpen,
 				'translate-y-full': !drawerOpen,
