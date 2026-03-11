@@ -12,6 +12,7 @@ import DrawerComponent from './DrawerComponent.vue'
 import { isMobile } from '@/composables/navigator'
 import NextRoundScreen from './NextRoundScreen.vue'
 import GameOverScreen from './GameOverScreen.vue'
+import { setThemeColor } from '@/utils/setThemeColor'
 
 const isMobileDevice = isMobile.value
 
@@ -276,6 +277,7 @@ const animateBadSeven = () => {
 	if (flashScreen) {
 		flashScreen.classList.add('red-flash')
 		setTimeout(() => flashScreen.classList.remove('red-flash'), 200)
+		setTimeout(() => setThemeColor('#18181b'), 200)
 	}
 }
 
