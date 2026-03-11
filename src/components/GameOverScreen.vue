@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CyberText from './CyberText.vue'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 // Props for gameData, playerRankings, isMobileDevice
 defineProps<{
@@ -16,6 +16,126 @@ defineProps<{
 const emit = defineEmits(['restartGame', 'goBackToSetup', 'quitGame'])
 
 const step = ref<1 | 2>(1)
+
+// --- Firework Animation ---
+
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+let animationFrameId: number | null = null
+
+// Pixel firework particle
+interface Particle {
+	x: number
+	y: number
+	vx: number
+	vy: number
+	color: string
+	life: number
+	maxLife: number
+	size: number
+}
+
+const colors = [
+	'#e879f9', // fuchsia-400
+	// '#34d399', // green-400
+	'#67e8f9', // cyan-300
+	// '#60a5fa', // blue-400
+	// '#818cf8', // indigo-400
+	// '#a78bfa', // purple-400
+	// '#f87171', // red-400
+	// '#facc15', // yellow-400
+	'#f3f4f6', // gray-100
+]
+
+function randomInt(a: number, b: number) {
+	return Math.floor(Math.random() * (b - a + 1)) + a
+}
+
+let particles: Particle[] = []
+let lastFirework = 0
+
+function launchFirework(width: number, height: number) {
+	const x = randomInt(Math.floor(width * 0.2), Math.floor(width * 0.8))
+	const y = randomInt(Math.floor(height * 0.2), Math.floor(height * 0.5))
+	const color = colors[randomInt(0, colors.length - 1)] ?? '#fff'
+	const count = randomInt(18, 28)
+	for (let i = 0; i < count; i++) {
+		const angle = (Math.PI * 2 * i) / count + Math.random() * 0.1
+		const speed = Math.random() * 2 + 1.5
+		particles.push({
+			x,
+			y,
+			vx: Math.cos(angle) * speed,
+			vy: Math.sin(angle) * speed,
+			color: color,
+			life: 0,
+			maxLife: randomInt(70, 90), // Increased for slower fade
+			size: randomInt(3, 6),
+		})
+	}
+}
+
+function animateFireworks() {
+	const canvas = canvasRef.value
+	if (!canvas) return
+	const ctx = canvas.getContext('2d')
+	if (!ctx) return
+	const dpr = window.devicePixelRatio || 1
+	const width = window.innerWidth
+	const height = Math.round(window.innerHeight * 0.3) // Only top 30% of viewport
+	canvas.width = width * dpr
+	canvas.height = height * dpr
+	canvas.style.width = width + 'px'
+	canvas.style.height = height + 'px'
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+	ctx.clearRect(0, 0, width, height)
+
+	// Launch new firework every 1000-2000ms
+	const now = Date.now()
+	if (now - lastFirework > randomInt(1000, 2000)) {
+		launchFirework(width, height)
+		lastFirework = now
+	}
+
+	// Update and draw particles
+	for (let i = particles.length - 1; i >= 0; i--) {
+		const p = particles[i]
+		if (!p) continue
+		p.x += p.vx
+		p.y += p.vy
+		p.vy += 0.04 // gravity
+		p.life++
+		// Fade out
+		const alpha = Math.max(0, 1 - p.life / p.maxLife)
+		ctx.globalAlpha = alpha
+		ctx.fillStyle = p.color
+		ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size)
+		ctx.globalAlpha = 1
+		if (p.life > p.maxLife) {
+			particles.splice(i, 1)
+		}
+	}
+
+	animationFrameId = requestAnimationFrame(animateFireworks)
+}
+
+function handleResize() {
+	// Redraw on resize
+	animateFireworks()
+}
+
+onMounted(() => {
+	if (canvasRef.value) {
+		animateFireworks()
+		window.addEventListener('resize', handleResize)
+	}
+})
+
+onUnmounted(() => {
+	if (animationFrameId) {
+		cancelAnimationFrame(animationFrameId)
+	}
+	window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <template>
@@ -27,6 +147,14 @@ const step = ref<1 | 2>(1)
 		]"
 		class="fixed inset-0 z-60 pb-26 bg-gray-950/90 backdrop-blur-sm overflow-hidden flex flex-col items-center py-2 px-6"
 	>
+		<!-- Firework Canvas Background -->
+		<canvas
+			v-show="step === 1"
+			ref="canvasRef"
+			class="firework-canvas"
+			aria-hidden="true"
+		></canvas>
+
 		<transition>
 			<div
 				v-if="step === 1"
@@ -34,22 +162,24 @@ const step = ref<1 | 2>(1)
 				class="flex flex-col max-w-85 w-full h-full overflow-hidden items-center"
 			>
 				<CyberText
-					size="text-3xl"
-					text-margin="ml-[3px]"
+					id="game-over-text"
+					size="text-2xl"
+					text-margin="ml-[4px]"
 					:value="'Game Over'"
+					class="mt-10 animate-pulseHeader"
 				/>
 
-				<p class="mt-5 font-mono text-white text-2xl">
+				<p class="mt-5 font-mono font-semibold text-white text-lg">
 					{{ playerRankings[0]?.name }} wins!
 				</p>
-				<p class="mt-5 font-mono text-white text-xl">
+				<p class="mt-2 font-mono font-medium text-white text">
 					{{ playerRankings[0]?.score.toLocaleString() }} points
 				</p>
 				<div
 					ref="scoreboard-game-over"
 					id="scoreboard-game-over"
 					key="scoreboard-game-over"
-					class="border-y-2 max-w-85 border-gray-900/60 self-center max-h-fit w-full overflow-y-scroll scroll-smooth py-4 mt-4 flex flex-col gap-y-4 flex-1"
+					class="border-y-2 max-w-85 border-gray-900/60 self-center max-h-fit w-full overflow-y-scroll scroll-smooth py-4 mt-20 flex flex-col gap-y-4 flex-1"
 				>
 					<transition-group>
 						<div
@@ -139,3 +269,16 @@ const step = ref<1 | 2>(1)
 		</Transition>
 	</div>
 </template>
+
+<style scoped>
+.firework-canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 30vh;
+	z-index: 61; /* Above overlay (z-60), below content */
+	pointer-events: none;
+	background: transparent;
+}
+</style>

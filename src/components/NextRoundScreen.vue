@@ -15,9 +15,10 @@ defineProps<{
 		class="fixed inset-0 z-60 bg-gray-950/90 backdrop-blur-sm flex flex-col items-center justify-center py-2 px-6"
 	>
 		<CyberText
-			size="text-3xl"
-			text-margin="ml-[3px]"
+			size="text-2xl"
+			text-margin="ml-[4px]"
 			:value="`Round ${currentRound}`"
+			class="animate-pulseHeader"
 		/>
 	</div>
 </template>

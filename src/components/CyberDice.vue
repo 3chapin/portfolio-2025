@@ -417,7 +417,7 @@ onMounted(() => {
 						@touchstart="() => {}"
 						class="size-7 stroke-gray-500 active:stroke-white cursor-pointer"
 					/>
-					<p class="self-center font-mono text-gray-400">
+					<p class="self-center font-mono font-medium text-gray-400">
 						Round
 						<span id="round-number" class="text-white">{{
 							gameData.currentRound
@@ -433,13 +433,14 @@ onMounted(() => {
 					type="font-mono"
 					color1="text-cyan-300"
 					color2="text-fuchsia-400"
+					class="animate-pulseHeader"
 				/>
 				<div class="flex w-full flex-col h-full overflow-hidden gap-y-4">
-					<p class="font-mono self-center text-gray-400">
+					<p class="font-mono font-medium self-center text-gray-400">
 						Roll {{ gameData.currentRoundRolls.length + 1 }}
 					</p>
 					<CyberText
-						class="self-center"
+						class="self-center animate-pulseHeader"
 						text-margin="ml-[3px]"
 						size="text-xl"
 						:value="`${
@@ -646,7 +647,7 @@ onMounted(() => {
 				/>
 				<p
 					v-if="gameData.setupStep === 1"
-					class="text-center font-mono text-white"
+					class="text-center font-mono font-medium text-white"
 				>
 					Who's playing?
 				</p>
@@ -662,7 +663,7 @@ onMounted(() => {
 				<div v-if="playersStillIn.length < 2" class="size-7 invisible"></div>
 				<p
 					v-if="gameData.setupStep === 2"
-					class="text-center font-mono text-white"
+					class="text-center font-mono font-medium text-white"
 				>
 					How many rounds?
 				</p>
