@@ -277,7 +277,7 @@ const animateBadSeven = () => {
 	if (flashScreen) {
 		flashScreen.classList.add('red-flash')
 		setTimeout(() => flashScreen.classList.remove('red-flash'), 200)
-		setTimeout(() => setThemeColor('#18181b'), 200)
+		setTimeout(() => setThemeColor('#18181b'), 250)
 	}
 }
 
