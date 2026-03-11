@@ -12,9 +12,11 @@ import DrawerComponent from './DrawerComponent.vue'
 import { isMobile } from '@/composables/navigator'
 import NextRoundScreen from './NextRoundScreen.vue'
 import GameOverScreen from './GameOverScreen.vue'
-import { setThemeColor } from '@/utils/setThemeColor'
+import { useFlashOverlay } from '@/composables/useFlashOverlay'
 
 const isMobileDevice = isMobile.value
+
+const { flashing, flashRed } = useFlashOverlay()
 
 type Player = {
 	id: number
@@ -273,12 +275,12 @@ const endRound = () => {
 }
 
 const animateBadSeven = () => {
-	const flashScreen = document.getElementById('flash-overlay')
-	if (flashScreen) {
-		flashScreen.classList.add('red-flash')
-		setTimeout(() => flashScreen.classList.remove('red-flash'), 200)
-		setTimeout(() => setThemeColor('#18181b'), 250)
-	}
+	flashRed(200)
+	// const flashScreen = document.getElementById('flash-overlay')
+	// if (flashScreen) {
+	// 	flashScreen.classList.add('red-flash')
+	// 	setTimeout(() => flashScreen.classList.remove('red-flash'), 200)
+	// }
 }
 
 const animateNextRound = () => {
@@ -318,10 +320,10 @@ const handleNumberButton = (value: number | string) => {
 		}
 	} else {
 		if (newRollValue === 7) {
+			animateBadSeven()
 			if (gameData.value.currentRound < gameData.value.totalRounds) {
 				//end round
 				endRound()
-				animateBadSeven()
 			} else {
 				//end Game
 				gameData.value.gameOver = true
@@ -383,7 +385,12 @@ onMounted(() => {
 		:class="isMobileDevice === false ? 'py-12' : ''"
 		class="w-full max-w-100 justify-self-center h-dvh overflow-hidden py-2 px-6 pb-8 flex flex-col"
 	>
-		<div id="flash-overlay" class="z-60"></div>
+		<!-- <div id="flash-overlay" class="z-60"></div> -->
+
+		<div
+			v-if="flashing"
+			class="fixed inset-0 z-61 bg-red-400 opacity-80 pointer-events-none transition-opacity duration-200"
+		></div>
 
 		<Transition name="slide-right">
 			<NextRoundScreen
@@ -796,7 +803,7 @@ h3 {
 	user-select: none;
 }
 
-.red-flash {
+/* .red-flash {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -807,7 +814,7 @@ h3 {
 	pointer-events: none;
 	transition: opacity 0.2s ease-in-out;
 	visibility: visible;
-}
+} */
 
 .slide-right-enter-from {
 	transform: translateX(100%);
