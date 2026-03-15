@@ -11,8 +11,8 @@ const router = createRouter({
 			name: 'home',
 			component: HomeView,
 			meta: {
-				title: 'mjlowell',
-				favicon: '/default.png',
+				title: '/.games',
+				favicon: '/assets/games-icon-32.png',
 			},
 		},
 		{
@@ -20,8 +20,8 @@ const router = createRouter({
 			name: 'cyber-dice',
 			component: CyberDiceView,
 			meta: {
-				title: 'Cyber Dice',
-				favicon: '/cyber-dice-logo.png',
+				title: 'cyber-dice',
+				favicon: '/assets/cyber-dice-logo.png',
 			},
 		},
 	],
