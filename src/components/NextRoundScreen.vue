@@ -17,7 +17,7 @@ defineProps<{
 		<CyberText
 			size="text-2xl"
 			text-margin="ml-[4px]"
-			:value="`Round ${currentRound}`"
+			:value="`round-${currentRound}`"
 			class="animate-pulseHeader"
 		/>
 	</div>

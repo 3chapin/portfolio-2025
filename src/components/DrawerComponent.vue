@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import BackArrow from './icons/BackArrow.vue'
+import ArrowsLeftToRight from './icons/ArrowsLeftToRight.vue'
+import CloseX from './icons/CloseX.vue'
 
-withDefaults(
+const props = withDefaults(
 	defineProps<{
 		drawerOpen: boolean
 		drawerType: string
@@ -16,6 +17,14 @@ const emit = defineEmits(['close', 'openOther'])
 
 const handleClose = () => {
 	emit('close')
+}
+
+const handleOther = () => {
+	if (props.drawerType === 'manualRoll') {
+		emit('openOther', 'players')
+	} else {
+		emit('openOther', 'manualRoll')
+	}
 }
 </script>
 
@@ -37,16 +46,27 @@ const handleClose = () => {
 			},
 		]"
 	>
-		<div class="py-4 flex w-full max-w-85">
+		<div class="flex flex-row justify-between py-4 w-full max-w-85">
 			<button
 				name="next-step"
 				@click="handleClose"
 				@touchstart="() => {}"
-				class="flex flex-row group items-center w-full gap-x-2 justify-center text-gray-500 font-semibold bg-gray-950 rounded p-3 pl-4 text-sm self-center font-mono cursor-pointer hover:bg-gray-800 active:bg-gray-900 active:text-white"
+				:class="drawerType === 'options' ? 'w-full' : ''"
+				class="flex flex-row group items-center w-fit gap-x-3 justify-center text-gray-500 font-semibold bg-gray-950 rounded p-3 text-sm self-center font-mono cursor-pointer hover:bg-gray-900 active:bg-gray-800 active:text-white"
 			>
-				Hide
-				<BackArrow
-					class="rotate-270 stroke-gray-500 size-6 cursor-pointer group-active:stroke-white"
+				<CloseX class="stroke-gray-500 size-6 group-active:stroke-white" />
+				close
+			</button>
+			<button
+				v-if="props.drawerType !== 'options'"
+				name="handle-other-button"
+				@click="handleOther"
+				@touchstart="() => {}"
+				class="flex flex-row group items-center w-fit gap-x-4 justify-center text-gray-500 font-semibold bg-gray-950 rounded p-3 text-sm self-center font-mono cursor-pointer hover:bg-gray-900 active:bg-gray-800 active:text-white"
+			>
+				switch
+				<ArrowsLeftToRight
+					class="stroke-gray-500 size-6 group-active:stroke-white"
 				/>
 			</button>
 		</div>

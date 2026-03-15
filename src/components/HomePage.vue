@@ -5,10 +5,10 @@ import ProjectCard from '@/components/ProjectCard.vue'
 
 <template>
 	<HeaderBar />
-	<main class="w-full h-fit px-8 pb-8 mt-50 flex justify-center">
+	<main class="w-full h-fit px-8 pb-8 mt-55 flex justify-center">
 		<div id="page-container" class="max-w-5xl w-full">
 			<div class="flex flex-row flex-wrap gap-10 justify-center">
-				<ProjectCard name="Cyber Dice" link="/cyber-dice" />
+				<ProjectCard name="cyber-dice" link="/cyber-dice" />
 			</div>
 		</div>
 	</main>

@@ -165,15 +165,15 @@ onUnmounted(() => {
 					id="game-over-text"
 					size="text-2xl"
 					text-margin="ml-[4px]"
-					:value="'Game Over'"
+					:value="'game-over'"
 					class="mt-10 animate-pulseHeader"
 				/>
 
 				<p class="mt-5 font-mono font-semibold text-white text-lg">
-					{{ playerRankings[0]?.name }} wins!
+					{{ playerRankings[0]?.name }}-wins!
 				</p>
 				<p class="mt-2 font-mono font-medium text-white text">
-					{{ playerRankings[0]?.score.toLocaleString() }} points
+					{{ playerRankings[0]?.score.toLocaleString() }}-points
 				</p>
 				<div
 					ref="scoreboard-game-over"
@@ -213,6 +213,7 @@ onUnmounted(() => {
 				</div>
 				<div
 					id="step-1-button"
+					:class="isMobileDevice ? 'bottom-12' : ''"
 					class="mt-15 flex flex-col bottom-8 fixed gap-y-7 max-w-85 w-full"
 				>
 					<button
@@ -221,7 +222,7 @@ onUnmounted(() => {
 						@touchstart="() => {}"
 						class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 					>
-						Next
+						next
 					</button>
 				</div>
 			</div>
@@ -239,31 +240,31 @@ onUnmounted(() => {
 					@touchstart="() => {}"
 					class="text-gray-500 font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-gray-500 hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 				>
-					Back to Scoreboard
+					back-to-scoreboard
 				</button>
 				<button
-					name="play-again"
+					name="play-again-button"
 					@click="() => emit('restartGame')"
 					@touchstart="() => {}"
 					class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 				>
-					Play Again (Same Setup)
+					play-again
 				</button>
 				<button
-					name="back-to-setup"
+					name="back-to-setup-button"
 					@click="() => emit('goBackToSetup')"
 					@touchstart="() => {}"
 					class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 				>
-					Change Setup
+					change-setup
 				</button>
 				<button
-					name="enter-roll"
+					name="quit-game-button"
 					@click="() => emit('quitGame')"
 					@touchstart="() => {}"
 					class="font-semibold bg-gray-950 rounded w-full min-h-12 self-center font-mono cursor-pointer border-2 hover:bg-gray-800 active:border-2border-red-400 text-red-400 active:border-red-400 active:ring-red-400 active:ring-2"
 				>
-					Quit
+					quit-game
 				</button>
 			</div>
 		</Transition>
