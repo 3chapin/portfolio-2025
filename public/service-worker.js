@@ -3,8 +3,8 @@ const urlsToCache = [
 	'/',
 	'/index.html',
 	'/manifest.webmanifest',
-	'/assets/mjlowell-icon-192.png',
-	'/assets/mjicon-512.png',
+	'/neon-icon-192.png',
+	'/neon-icon-512.png',
 	// Add more assets as needed
 ]
 

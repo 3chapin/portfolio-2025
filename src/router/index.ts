@@ -12,7 +12,7 @@ const router = createRouter({
 			component: HomeView,
 			meta: {
 				title: 'neon games',
-				favicon: '/assets/neon-favicon-32.png',
+				favicon: '/neon-favicon-32.png',
 			},
 		},
 		{
@@ -21,7 +21,7 @@ const router = createRouter({
 			component: CyberDiceView,
 			meta: {
 				title: 'cyber-dice',
-				favicon: '/assets/cyber-dice-favicon-32.png',
+				favicon: '/cyber-dice-favicon-32.png',
 			},
 		},
 	],
