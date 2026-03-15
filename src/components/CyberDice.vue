@@ -62,12 +62,12 @@ type GameData = {
 	currentRoundRolls: { playerId: number; rollValue: number | string }[]
 }
 
-type Event = {
-	type: 'roll' | 'markOut'
-	playerId: number | null
-	rollValue?: number | string | null
-	gameData: GameData
-}
+// type Event = {
+// 	type: 'roll' | 'markOut'
+// 	playerId: number | null
+// 	rollValue?: number | string | null
+// 	gameData: GameData
+// }
 
 const createDefaultGameData = (): GameData => ({
 	setupStep: 0,
@@ -167,7 +167,7 @@ const focusInput = () => {
 	}
 }
 
-const handleInput = (event: Event) => {
+const handleInput = (event: InputEvent) => {
 	const target = event.target as HTMLInputElement
 	target.value = target.value.replace(/\s+/g, '-') // replace all spaces with dashes
 	target.value = target.value.toLowerCase()
@@ -838,7 +838,7 @@ onMounted(() => {
 							placeholder="enter-player-name"
 							name="enter-name"
 							autocomplete="off"
-							@input="handleInput"
+							@input="handleInput($event)"
 							v-model="inputValue"
 							class="self-center placeholder:text-gray-500 w-full rounded bg-gray-900 text-white font-mono tracking-wide px-3 min-h-12 focus:px-2.5 outline-0 focus:ring-2 focus:ring-cyan-300 focus:border-2 focus:border-fuchsia-400"
 						/>
