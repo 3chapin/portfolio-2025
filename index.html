@@ -2,12 +2,12 @@
 <html lang="" class="bg-gray-950">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="icon" href="/assets/games-icon-32.png" />
+		<link rel="icon" href="/assets/neon-icon-32.png" />
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1"
 		/>
-		<title>/.games</title>
+		<title>neon games</title>
 		<style>
 			html,
 			body {
@@ -17,19 +17,68 @@
 		</style>
 		<!-- PWA Manifest -->
 		<link rel="manifest" href="/manifest.webmanifest" />
-		<meta name="theme-color" content="#18181b" />
+		<meta name="theme-color" content="#030712" />
 		<!-- iOS support -->
-		<link rel="apple-touch-icon" href="/assets/games-icon-192.png" />
+		<link rel="apple-touch-icon" href="/assets/neon-icon-192.png" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta
 			name="apple-mobile-web-app-status-bar-style"
 			content="black-translucent"
 		/>
 		<meta name="mobile-web-app-capable" content="yes" />
+
+		<!-- iPhone SE (1st gen), 5, 5S, 5C -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-640x1136.png"
+			media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<!-- iPhone 6, 7, 8, SE (2nd/3rd gen) -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-750x1334.png"
+			media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<!-- iPhone 6/7/8 Plus -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-1242x2208.png"
+			media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)"
+		/>
+		<!-- iPhone X, XS, 11 Pro -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-1125x2436.png"
+			media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+		/>
+		<!-- iPhone XR, XS Max, 11, 11 Pro Max -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-1242x2688.png"
+			media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)"
+		/>
+		<!-- iPad Mini, Air -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-1536x2048.png"
+			media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<!-- iPad Pro 10.5" -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-1668x2224.png"
+			media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)"
+		/>
+		<!-- iPad Pro 12.9" -->
+		<link
+			rel="apple-touch-startup-image"
+			href="/assets/neon-splash-2048x2732.png"
+			media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)"
+		/>
 	</head>
 	<body>
 		<div id="app" class="tracking-wide overflow-auto"></div>
-		<script type="module" src="/src/main.js"></script>
+		<script type="module" src="/src/main.ts"></script>
 
 		<!-- Register service worker for PWA -->
 		<script>

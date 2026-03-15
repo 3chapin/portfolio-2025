@@ -10,25 +10,25 @@
 		>
 			<div id="nav-content" class="flex flex-row justify-center">
 				<div
-					class="cursor-default rounded-br-none rounded-lg bg-gray-950 w-30 h-12 border-3 border-cyan-300 animate-pulseHeader"
+					class="cursor-default rounded-br-none rounded-lg bg-gray-950 w-28 h-16 border-3 border-cyan-300 animate-pulseHeader"
 				>
 					<div
-						class="grid grid-rows-1 rounded backdrop-blur-md w-30 h-12 border-3 border-fuchsia-400 justify-center items-center animate-pulseHeader"
+						class="grid grid-rows-1 rounded backdrop-blur-md w-28 h-16 border-3 border-fuchsia-400 justify-center items-center animate-pulseHeader"
 					>
 						<p
 							class="col-start-1 row-start-1 text-base font-mono p-2 text-cyan-300 animate-pulseHeader"
 						>
-							/.games
+							neon games
 						</p>
 						<p
 							class="col-start-1 row-start-1 ml-0.75 text-base font-mono p-2 text-fuchsia-400 animate-pulseHeader"
 						>
-							/.games
+							neon games
 						</p>
 						<p
 							class="col-start-1 row-start-1 text-base font-mono p-2 text-cyan-300 blur-sm"
 						>
-							/.games
+							neon games
 						</p>
 					</div>
 				</div>

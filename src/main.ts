@@ -7,9 +7,9 @@ import { setFavicon } from './utils/setFavicon'
 
 router.afterEach((to) => {
 	const favicon = to.meta.favicon as string | undefined
-	setFavicon(favicon ?? '/assets/games-icon-32.png')
+	setFavicon(favicon ?? '/assets/neon-favicon-32.png')
 
-	document.title = (to.meta.title as string) ?? 'My App'
+	document.title = (to.meta.title as string) ?? 'neon games'
 })
 
 const app = createApp(App)

@@ -14,8 +14,8 @@ export default defineConfig({
 		VitePWA({
 			registerType: 'autoUpdate',
 			manifest: {
-				name: '/.games',
-				short_name: '/.games',
+				name: 'neon games',
+				short_name: 'neon games',
 				start_url: '.',
 				display: 'standalone',
 				background_color: '#18181b',
@@ -23,12 +23,12 @@ export default defineConfig({
 				description: 'a games library',
 				icons: [
 					{
-						src: '/assets/games-icon-192.png',
+						src: '/assets/neon-icon-192.png',
 						sizes: '192x192',
 						type: 'image/png',
 					},
 					{
-						src: '/assets/games-icon-512.png',
+						src: '/assets/neon-icon-512.png',
 						sizes: '512x512',
 						type: 'image/png',
 					},
