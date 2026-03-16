@@ -5,6 +5,14 @@ const urlsToCache = [
 	'/manifest.webmanifest',
 	'/neon-icon-192.png',
 	'/neon-icon-512.png',
+	'/neon-splash-640x1136.png',
+	'/neon-splash-750x1334.png',
+	'/neon-splash-1125x2436.png',
+	'/neon-splash-1242x2208.png',
+	'/neon-splash-1242x2688.png',
+	'/neon-splash-1536x2048.png',
+	'/neon-splash-1668x2224.png',
+	'/neon-splash-2048x2732.png',
 	// Add more assets as needed
 ]
 
