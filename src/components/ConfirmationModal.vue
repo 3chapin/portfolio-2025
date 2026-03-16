@@ -30,6 +30,7 @@ defineEmits(['confirm', 'cancel'])
 				<button
 					class="px-4 py-2 w-full rounded font-mono font-semibold bg-gray-950 text-white border-2 cursor-pointer border-white hover:bg-gray-900 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 					@click="$emit('confirm', props.type)"
+					@touchstart="() => {}"
 				>
 					{{
 						props.type === 'restart'
@@ -44,6 +45,7 @@ defineEmits(['confirm', 'cancel'])
 				<button
 					class="px-4 py-2 w-full max-w-85 rounded font-mono font-semibold bg-gray-950 text-gray-400 border-2 cursor-pointer border-gray-600 hover:bg-gray-900 active:text-white active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 					@click="$emit('cancel')"
+					@touchstart="() => {}"
 				>
 					cancel
 				</button>

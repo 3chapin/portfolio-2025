@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, watch } from 'vue'
+import { ref, computed, nextTick, onMounted, watch, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { updateStorage } from '@/composables/storageUtils'
 import CyberText from './CyberText.vue'
@@ -16,6 +16,7 @@ import CloseX from './icons/CloseX.vue'
 import CyberDiceRules from './CyberDiceRules.vue'
 import HelpIcon from './icons/HelpIcon.vue'
 import ConfirmationModal from './ConfirmationModal.vue'
+// import ArrowPathRounded from './icons/ArrowPathRounded.vue'
 
 const isMobileDevice = isMobile.value
 const { keyboardOpen } = useKeyboardOpen()
@@ -60,14 +61,15 @@ type GameData = {
 	currentScore: number
 	currentPlayerId: number | null
 	currentRoundRolls: { playerId: number; rollValue: number | string }[]
+	eventHistory?: Event[]
 }
 
-// type Event = {
-// 	type: 'roll' | 'markOut'
-// 	playerId: number | null
-// 	rollValue?: number | string | null
-// 	gameData: GameData
-// }
+type Event = {
+	type: 'manualRoll' | 'markOut'
+	playerId: number | null
+	rollValue?: number | string | null
+	gameData: GameData
+}
 
 const createDefaultGameData = (): GameData => ({
 	setupStep: 0,
@@ -83,6 +85,7 @@ const createDefaultGameData = (): GameData => ({
 	currentScore: 0,
 	currentPlayerId: null,
 	currentRoundRolls: [],
+	eventHistory: [],
 })
 
 const gameData = ref<GameData>(createDefaultGameData())
@@ -283,6 +286,7 @@ const goBackToSetup = () => {
 	gameData.value.currentPlayerId = gameData.value.players[0]?.id || null
 	gameData.value.currentRound = 1
 	gameData.value.currentRoundRolls = []
+	gameData.value.eventHistory = []
 	gameData.value.currentScore = 0
 	gameData.value.gameOver = false
 	gameData.value.started = false
@@ -292,9 +296,32 @@ const goBackToSetup = () => {
 	})
 }
 
+const createEvent = (
+	type: 'manualRoll' | 'markOut',
+	playerId: number | null,
+	rollValue?: number | string | null,
+) => {
+	const gameDataSnapshot = structuredClone(toRaw(gameData.value))
+
+	delete gameDataSnapshot.eventHistory
+
+	const event: Event = {
+		type,
+		playerId,
+		rollValue: rollValue ?? null,
+		gameData: gameDataSnapshot,
+	}
+
+	if (gameData.value.eventHistory !== undefined) {
+		gameData.value.eventHistory.push(event)
+	}
+}
+
 const markOut = (id: number) => {
 	const playerToGoOut = gameData.value.players.find((p) => p.id === id)
 	if (!playerToGoOut) return
+
+	createEvent('markOut', id)
 
 	const wasCurrentPlayer = playerToGoOut.id === gameData.value.currentPlayerId
 
@@ -350,6 +377,7 @@ const animateNextRound = () => {
 }
 
 const handleNumberButton = (value: number | string) => {
+	createEvent('manualRoll', gameData.value.currentPlayerId, value)
 	let newRollValue: string | number | null = null
 	if (value === 'doubles') {
 		newRollValue = value
@@ -527,9 +555,20 @@ onMounted(() => {
 					class="animate-pulseHeader"
 				/>
 				<div class="flex w-full flex-col h-full overflow-hidden gap-y-4">
-					<p class="font-mono font-medium self-center text-gray-400">
-						roll-{{ gameData.currentRoundRolls.length + 1 }}
-					</p>
+					<div class="flex flex-row justify-center items-center gap-x-2">
+						<!-- <button
+							@click=""
+							@touchstart="() => {}"
+							class="p-1 rounded group hover:bg-gray-900 active:bg-gray-800 cursor-pointer"
+						>
+							<ArrowPathRounded
+								class="size-7 stroke-gray-500 group-active:stroke-white"
+							/>
+						</button> -->
+						<p class="font-mono font-medium self-center text-gray-400">
+							roll-{{ gameData.currentRoundRolls.length + 1 }}
+						</p>
+					</div>
 					<CyberText
 						class="self-center animate-pulseHeader"
 						text-margin="ml-[3px]"
@@ -810,9 +849,8 @@ onMounted(() => {
 						name="next-step"
 						@click="advanceStep"
 						@touchstart="() => {}"
-						class="flex flex-row group items-center rounded font-semibold self-center cursor-pointer text-sm -ml-12 bg-gray-950 border-gray-500 text-gray-500 w-fit h-fit font-mono pt-1 pb-1 pr-1 pl-3 hover:bg-gray-800 active:bg-gray-800 active:text-white"
+						class="flex flex-row group items-center rounded font-semibold self-center cursor-pointer text-sm -ml-2 bg-gray-950 border-gray-500 text-gray-500 w-fit h-fit font-mono p-1 hover:bg-gray-900 active:bg-gray-800 active:text-white"
 					>
-						next
 						<BackArrow
 							class="stroke-gray-500 size-7 rotate-180 group-active:stroke-white"
 						/>

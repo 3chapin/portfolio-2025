@@ -33,7 +33,7 @@ const handleOther = () => {
 		id="overlay"
 		v-if="drawerOpen"
 		@click="handleClose"
-		class="w-screen h-[90dvh] z-30 bottom-0 fixed"
+		class="w-screen h-[72dvh] z-30 bottom-0 fixed"
 	></div>
 
 	<div
