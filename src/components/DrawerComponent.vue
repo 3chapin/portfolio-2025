@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CloseX from './icons/CloseX.vue'
-import EventHistory from './icons/EventHistory.vue'
+// import EventHistory from './icons/EventHistory.vue'
+//
 import SquaresIcon from './icons/SquaresIcon.vue'
 import UserMinus from './icons/UserMinus.vue'
 
