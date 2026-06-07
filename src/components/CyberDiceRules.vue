@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import CloseX from './icons/CloseX.vue'
 
 const props = defineProps<{
@@ -7,6 +8,37 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['close-rules'])
+
+const scrollableContainer = ref<HTMLDivElement | null>(null)
+
+const canScrollDown = ref<boolean>(false)
+const canScrollUp = ref<boolean>(false)
+
+const checkScrollPosition = () => {
+	if (!scrollableContainer.value) return
+	const { scrollTop, scrollHeight, clientHeight } = scrollableContainer.value
+	canScrollDown.value = scrollTop + clientHeight < scrollHeight - 1
+	canScrollUp.value = scrollTop > 1
+}
+
+// Check scroll position when modal opens
+watch(
+	() => props.showRules,
+	async (isOpen) => {
+		if (isOpen) {
+			await nextTick()
+			checkScrollPosition()
+		}
+	},
+)
+
+onMounted(() => {
+	window.addEventListener('resize', checkScrollPosition)
+})
+
+onBeforeUnmount(() => {
+	window.removeEventListener('resize', checkScrollPosition)
+})
 </script>
 
 <template>
@@ -18,10 +50,19 @@ const emit = defineEmits(['close-rules'])
 	>
 		<div
 			id="rules"
-			class="mt-4 flex flex-col gap-y-4 overflow-scroll h-fit mb-20"
+			ref="scrollableContainer"
+			@scroll="checkScrollPosition"
+			:class="[
+				canScrollDown
+					? 'shadow-[inset_0px_-12px_16px_-16px] shadow-gray-400'
+					: '',
+				canScrollUp ? 'shadow-[inset_0px_12px_16px_-16px] shadow-gray-400' : '',
+				canScrollDown && canScrollUp ? 'shadow-both' : '',
+			]"
+			class="mt-4 flex flex-col gap-y-4 overflow-y-scroll h-fit mb-22"
 		>
 			<ul
-				class="text-gray-500 font-mono text-sm max-w-80 list-disc list-inside space-y-4 pb-12 hanging-indent"
+				class="text-gray-500 font-mono text-sm max-w-85 list-disc list-inside space-y-6 pb-6 hanging-indent"
 			>
 				<p class="mt-2 text-lg text-center text-white">how to play</p>
 				<li>each player takes a turn rolling the dice</li>
@@ -70,5 +111,11 @@ const emit = defineEmits(['close-rules'])
 .hanging-indent li {
 	padding-left: 1.2em;
 	text-indent: -1.2em;
+}
+
+.shadow-both {
+	box-shadow:
+		inset 0px 12px 12px -16px rgb(156 163 175),
+		inset 0px -12px 12px -16px rgb(156 163 175);
 }
 </style>

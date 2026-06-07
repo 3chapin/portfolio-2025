@@ -16,7 +16,12 @@ import CloseX from './icons/CloseX.vue'
 import CyberDiceRules from './CyberDiceRules.vue'
 import HelpIcon from './icons/HelpIcon.vue'
 import ConfirmationModal from './ConfirmationModal.vue'
-// import ArrowPathRounded from './icons/ArrowPathRounded.vue'
+import draggable from 'vuedraggable'
+import HamburgerMenu from './icons/HamburgerMenu.vue'
+import type { drawerTypes } from './DrawerComponent.vue'
+import EventHistory from './icons/EventHistory.vue'
+import SquaresIcon from './icons/SquaresIcon.vue'
+import UserMinus from './icons/UserMinus.vue'
 
 const isMobileDevice = isMobile.value
 const { keyboardOpen } = useKeyboardOpen()
@@ -65,6 +70,7 @@ type GameData = {
 }
 
 type Event = {
+	id: number
 	type: 'manualRoll' | 'markOut'
 	playerId: number | null
 	rollValue?: number | string | null
@@ -131,9 +137,15 @@ const inputRef = ref<HTMLInputElement | null>(null)
 
 const playerList = ref<HTMLElement | null>(null)
 
+const dragging = ref(false)
+
+const customRounds = ref<number | null>(null)
+
+const customRoundsRef = ref<HTMLInputElement | null>(null)
+
 const drawerOpen = ref(false)
 
-const drawerType = ref<string>('')
+const drawerType = ref<drawerTypes>(null)
 
 const showTransition = ref<boolean>(false)
 
@@ -143,7 +155,7 @@ const showConfirmation = ref(false)
 
 const confirmationType = ref('')
 
-const openDrawer = (type: string) => {
+const openDrawer = (type: drawerTypes) => {
 	if (drawerOpen.value === true && drawerType.value !== type) {
 		drawerOpen.value = false
 		setTimeout(() => {
@@ -167,6 +179,12 @@ const toggleRules = () => {
 const focusInput = () => {
 	if (inputRef.value) {
 		inputRef.value?.focus()
+	}
+}
+
+const unfocusInput = () => {
+	if (inputRef.value) {
+		inputRef.value?.blur()
 	}
 }
 
@@ -207,6 +225,18 @@ const removePlayer = (id: number) => {
 	focusInput()
 }
 
+const onDragEnd = () => {
+	unfocusInput()
+	focusInput()
+	gameData.value.players = gameData.value.players.map((p) => ({
+		id: p.id,
+		name: p.name,
+		score: p.score,
+		out: p.out,
+	}))
+	dragging.value = false
+}
+
 const advanceStep = () => {
 	gameData.value.setupStep++
 }
@@ -217,6 +247,32 @@ const backStep = () => {
 
 const chooseRounds = (number: number) => {
 	gameData.value.totalRounds = number
+	customRounds.value = null
+}
+
+const blockInvalidChars = (e: KeyboardEvent) => {
+	if (['e', 'E', '+', '-'].includes(e.key)) {
+		e.preventDefault()
+	}
+}
+
+const blurCustomRoundsInput = () => {
+	customRoundsRef.value?.blur()
+}
+
+const chooseCustomRounds = () => {
+	if (customRounds.value === null) {
+		return
+	}
+	if (customRounds.value === 0) {
+		customRounds.value = 1
+	}
+	if (customRounds.value > 99) {
+		customRounds.value = 99
+	}
+	if (customRounds.value > 0) {
+		gameData.value.totalRounds = customRounds.value
+	}
 }
 
 const startGame = () => {
@@ -255,6 +311,7 @@ const restartGame = () => {
 		gameData.value.currentPlayerId = gameData.value.players[0]?.id || null
 		gameData.value.currentRound = 1
 		gameData.value.currentRoundRolls = []
+		gameData.value.eventHistory = []
 		gameData.value.currentScore = 0
 		gameData.value.gameOver = false
 		gameData.value.started = true
@@ -294,6 +351,14 @@ const goBackToSetup = () => {
 		p.score = 0
 		p.out = false
 	})
+
+	if (
+		gameData.value.totalRounds !== 20 &&
+		gameData.value.totalRounds !== 15 &&
+		gameData.value.totalRounds !== 10
+	) {
+		customRounds.value = gameData.value.totalRounds
+	}
 }
 
 const createEvent = (
@@ -306,6 +371,7 @@ const createEvent = (
 	delete gameDataSnapshot.eventHistory
 
 	const event: Event = {
+		id: generateId(),
 		type,
 		playerId,
 		rollValue: rollValue ?? null,
@@ -315,6 +381,10 @@ const createEvent = (
 	if (gameData.value.eventHistory !== undefined) {
 		gameData.value.eventHistory.push(event)
 	}
+}
+
+const undoEvent = (id: number) => {
+	console.log('undo', id)
 }
 
 const markOut = (id: number) => {
@@ -328,12 +398,12 @@ const markOut = (id: number) => {
 	playerToGoOut.score += gameData.value.currentScore
 	playerToGoOut.out = true
 
-	if (wasCurrentPlayer) {
-		nextPlayer()
-	}
-
 	if (playersStillIn.value.length === 0) {
 		endRound()
+	}
+
+	if (wasCurrentPlayer) {
+		nextPlayer()
 	}
 }
 
@@ -394,8 +464,6 @@ const handleNumberButton = (value: number | string) => {
 		})
 	}
 
-	nextPlayer()
-
 	if (gameData.value.currentRoundRolls.length <= 3) {
 		if (newRollValue !== 7 && typeof newRollValue === 'number') {
 			gameData.value.currentScore = gameData.value.currentScore + newRollValue
@@ -414,6 +482,8 @@ const handleNumberButton = (value: number | string) => {
 			gameData.value.currentScore = gameData.value.currentScore + newRollValue
 		}
 	}
+
+	nextPlayer()
 }
 
 const nextPlayer = () => {
@@ -555,14 +625,17 @@ onMounted(() => {
 					class="animate-pulseHeader"
 				/>
 				<div class="flex w-full flex-col h-full overflow-hidden gap-y-4">
-					<div class="flex flex-row justify-center items-center gap-x-2">
+					<div
+						class="flex flex-row justify-center items-center min-h-8 gap-x-2"
+					>
 						<!-- <button
-							@click=""
+							v-if="gameData.eventHistory && gameData.eventHistory.length > 0"
+							@click="openDrawer('eventHistory')"
 							@touchstart="() => {}"
 							class="p-1 rounded group hover:bg-gray-900 active:bg-gray-800 cursor-pointer"
 						>
-							<ArrowPathRounded
-								class="size-7 stroke-gray-500 group-active:stroke-white"
+							<EventHistory
+								class="size-6 stroke-gray-500 group-active:stroke-white"
 							/>
 						</button> -->
 						<p class="font-mono font-medium self-center text-gray-400">
@@ -611,7 +684,7 @@ onMounted(() => {
 									</p>
 									<p
 										v-if="index !== 0 && playerRankings[0]!.score !== 0"
-										class="text-gray-600 font-mono text-sm"
+										class="text-gray-500 font-mono text-sm"
 									>
 										{{
 											(player.score - playerRankings[0]!.score).toLocaleString()
@@ -624,22 +697,24 @@ onMounted(() => {
 					<div
 						id="floating-buttons"
 						:class="isMobileDevice ? 'bottom-12' : ''"
-						class="flex fixed bottom-8 flex-row gap-x-6 w-full items-center justify-center self-center"
+						class="flex fixed bottom-8 left-0 flex-row gap-x-6 w-full items-center justify-center self-center"
 					>
 						<button
-							name="enter-roll"
+							name="enter-"
 							@click="openDrawer('manualRoll')"
 							@touchstart="() => {}"
-							class="text-white font-semibold bg-gray-950 max-w-40 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+							class="flex flex-row gap-x-3 items-center justify-center text-white text-sm font-semibold bg-gray-950 max-w-40 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 						>
+							<SquaresIcon class="size-6 stroke-white" />
 							enter-roll
 						</button>
 						<button
 							name="view-players"
 							@click="openDrawer('players')"
 							@touchstart="() => {}"
-							class="text-white font-semibold bg-gray-950 max-w-40 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+							class="flex flex-row gap-x-3 items-center justify-center text-white text-sm font-semibold bg-gray-950 max-w-40 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 						>
+							<UserMinus class="size-6 stroke-white" />
 							mark-out
 						</button>
 					</div>
@@ -648,6 +723,9 @@ onMounted(() => {
 			<DrawerComponent
 				:drawerOpen
 				:drawerType
+				:history-visible="
+					gameData.eventHistory && gameData.eventHistory.length > 0
+				"
 				@close="closeDrawer"
 				@open-other="openDrawer($event)"
 			>
@@ -686,6 +764,37 @@ onMounted(() => {
 							<span class="rotate-45">doubles</span>
 						</button>
 					</div>
+				</div>
+				<div
+					v-if="drawerType === 'eventHistory'"
+					ref="event-history"
+					id="event-history"
+					key="history"
+					class="border-y-2 border-gray-800/60 self-center w-full max-w-90 h-fit overflow-y-scroll scroll-smooth pt-4 pb-4 px-1 flex flex-col gap-y-2"
+				>
+					<transition-group>
+						<div
+							id="event-row"
+							v-for="event in [...(gameData.eventHistory ?? [])].reverse()"
+							:key="event.id"
+							class="flex flex-row rounded items-center min-h-14 max-h-14 mx-0.5 justify-between text-center px-3 transition-all duration-400"
+						>
+							<p class="text-gray-600 self-center font-mono">
+								{{
+									event.type === 'manualRoll'
+										? 'rolled'
+										: event.playerId + '-went-out'
+								}}{{ event.rollValue ? '-' + event.rollValue : '' }}
+							</p>
+							<button
+								@click="undoEvent(event.id)"
+								@touchstart="() => {}"
+								class="rounded font-semibold self-center cursor-pointer text-sm bg-none border-gray-500 text-gray-500 w-fit min-w-22 h-fit font-mono p-1 border-2 hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:text-white active:ring-cyan-300"
+							>
+								Undo
+							</button>
+						</div>
+					</transition-group>
 				</div>
 				<div
 					v-if="drawerType === 'players'"
@@ -902,25 +1011,40 @@ onMounted(() => {
 						:class="keyboardOpen === true ? 'max-h-[29dvh]' : ''"
 						class="border-y-2 border-gray-900 self-center w-full h-fit overflow-y-scroll scroll-smooth py-2 flex flex-col gap-y-2"
 					>
-						<div
-							id="player-row"
-							v-for="(player, index) in playersStillIn"
-							:key="player.id"
-							class="flex flex-row min-h-14 max-h-14 mx-0.5 justify-between text-center"
+						<draggable
+							v-model="gameData.players"
+							ghost-class="ghost"
+							@start="dragging = true"
+							@end="onDragEnd"
+							item-key="id"
 						>
-							<CyberText
-								class="self-center"
-								text-margin="ml-[3px]"
-								:value="index + 1 + '.   ' + player.name"
-							/>
-							<button
-								@click="removePlayer(player.id)"
-								@touchstart="() => {}"
-								class="rounded font-semibold self-center cursor-pointer text-sm bg-gray-950 border-gray-500 text-gray-500 w-fit h-fit font-mono p-1 border-2 hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:text-white active:ring-cyan-300"
-							>
-								remove
-							</button>
-						</div>
+							<template #item="{ element, index }">
+								<div
+									id="player-row"
+									:key="element.id"
+									class="flex flex-row bg-gray-950 min-h-14 max-h-14 mx-0.5 justify-between text-center cursor-pointer"
+								>
+									<div
+										id="grabber-and-text"
+										class="flex flex-row items-center gap-x-4"
+									>
+										<HamburgerMenu class="stroke-gray-500 size-7" />
+										<CyberText
+											class="self-center"
+											text-margin="ml-[3px]"
+											:value="index + 1 + '.   ' + element.name"
+										/>
+									</div>
+									<button
+										@click="removePlayer(element.id)"
+										@touchstart="() => {}"
+										class="rounded font-semibold self-center cursor-pointer text-sm bg-gray-950 border-gray-500 text-gray-500 w-fit h-fit font-mono p-1 border-2 hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:text-white active:ring-cyan-300"
+									>
+										remove
+									</button>
+								</div>
+							</template>
+						</draggable>
 					</div>
 				</div>
 				<div
@@ -932,20 +1056,28 @@ onMounted(() => {
 						<input
 							id="20-rounds"
 							type="radio"
+							v-model="gameData.totalRounds"
+							:value="20"
 							@click="chooseRounds(20)"
 							@keydown.enter="chooseRounds(20)"
-							checked
 							name="how-many-rounds"
 							class="self-center hidden peer/20-rounds"
 						/>
 						<label
 							for="20-rounds"
-							class="text-gray-500 font-mono rounded cursor-pointer w-full h-20 text-center content-center border-2 border-gray-500 hover:bg-gray-800 hover:text-white peer-checked/20-rounds:text-white peer-checked/20-rounds:border-3 peer-checked/20-rounds:border-fuchsia-400 peer-checked/20-rounds:ring-3 peer-checked/20-rounds:ring-cyan-300"
+							:class="
+								customRounds !== null
+									? 'border-gray-500 text-gray-500'
+									: 'peer-checked/20-rounds:text-white peer-checked/20-rounds:border-3 peer-checked/20-rounds:border-fuchsia-400 peer-checked/20-rounds:ring-3 peer-checked/20-rounds:ring-cyan-300'
+							"
+							class="text-gray-500 font-mono rounded cursor-pointer w-full h-20 text-center content-center border-2 border-gray-500 hover:bg-gray-800 hover:text-white"
 							>20-rounds
 						</label>
 						<input
 							id="15-rounds"
 							type="radio"
+							v-model="gameData.totalRounds"
+							:value="15"
 							@click="chooseRounds(15)"
 							@keydown.enter="chooseRounds(15)"
 							name="how-many-rounds"
@@ -953,12 +1085,19 @@ onMounted(() => {
 						/>
 						<label
 							for="15-rounds"
-							class="text-gray-500 font-mono rounded cursor-pointer w-full h-20 text-center content-center border-2 border-gray-500 hover:bg-gray-800 hover:text-white peer-checked/15-rounds:text-white peer-checked/15-rounds:border-3 peer-checked/15-rounds:border-fuchsia-400 peer-checked/15-rounds:ring-3 peer-checked/15-rounds:ring-cyan-300"
+							:class="
+								customRounds !== null
+									? 'border-gray-500 text-gray-500'
+									: 'peer-checked/15-rounds:text-white peer-checked/15-rounds:border-3 peer-checked/15-rounds:border-fuchsia-400 peer-checked/15-rounds:ring-3 peer-checked/15-rounds:ring-cyan-300'
+							"
+							class="text-gray-500 font-mono rounded cursor-pointer w-full h-20 text-center content-center border-2 border-gray-500 hover:bg-gray-800 hover:text-white"
 							>15-rounds
 						</label>
 						<input
 							id="10-rounds"
 							type="radio"
+							v-model="gameData.totalRounds"
+							:value="10"
 							@click="chooseRounds(10)"
 							@keydown.enter="chooseRounds(10)"
 							name="how-many-rounds"
@@ -966,9 +1105,35 @@ onMounted(() => {
 						/>
 						<label
 							for="10-rounds"
-							class="text-gray-500 font-mono rounded cursor-pointer w-full h-20 text-center content-center border-2 border-gray-500 hover:bg-gray-800 hover:text-white peer-checked/10-rounds:text-white peer-checked/10-rounds:border-3 peer-checked/10-rounds:border-fuchsia-400 peer-checked/10-rounds:ring-3 peer-checked/10-rounds:ring-cyan-300"
+							:class="
+								customRounds !== null
+									? 'border-gray-500 text-gray-500'
+									: 'peer-checked/10-rounds:text-white peer-checked/10-rounds:border-3 peer-checked/10-rounds:border-fuchsia-400 peer-checked/10-rounds:ring-3 peer-checked/10-rounds:ring-cyan-300'
+							"
+							class="font-mono rounded cursor-pointer w-full h-20 text-center content-center border-2 border-gray-500 text-gray-500 hover:bg-gray-800 hover:text-white"
 							>10-rounds
 						</label>
+						<p class="text-gray-400 text-center font-mono">or</p>
+						<input
+							id="custom-rounds"
+							ref="customRoundsRef"
+							type="number"
+							min="1"
+							max="99"
+							placeholder="enter-custom-amount"
+							name="custom-rounds"
+							autocomplete="off"
+							@keydown="blockInvalidChars"
+							@input="chooseCustomRounds"
+							@keydown.enter="blurCustomRoundsInput"
+							v-model="customRounds"
+							:class="
+								customRounds !== null && customRounds > 0
+									? 'ring-2 border-2 ring-cyan-300 border-fuchsia-400'
+									: 'border-gray-500'
+							"
+							class="self-center text-center placeholder:text-gray-500 w-full rounded bg-transparent border-2 focus:bg-gray-900 text-white font-mono tracking-wide px-3 h-20 focus:px-2.5 outline-0 focus:ring-2 focus:ring-cyan-300 focus:border-2 focus:border-fuchsia-400"
+						/>
 					</div>
 					<button
 						name="start-game"
@@ -1034,5 +1199,10 @@ h3 {
 .slide-down-enter-active,
 .slide-down-leave-active {
 	transition: transform 200ms ease-out;
+}
+
+.ghost {
+	opacity: 0.9;
+	background: #101828;
 }
 </style>

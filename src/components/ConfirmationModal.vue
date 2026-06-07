@@ -36,7 +36,7 @@ defineEmits(['confirm', 'cancel'])
 						props.type === 'restart'
 							? 'restart-game'
 							: props.type === 'setup'
-								? 'back-to-setup'
+								? 'change-setup'
 								: props.type === 'quit'
 									? 'quit-game'
 									: ''
