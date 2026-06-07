@@ -20,6 +20,7 @@ import draggable from 'vuedraggable'
 import HamburgerMenu from './icons/HamburgerMenu.vue'
 import type { drawerTypes } from './DrawerComponent.vue'
 // import EventHistory from './icons/EventHistory.vue'
+//
 import SquaresIcon from './icons/SquaresIcon.vue'
 import UserMinus from './icons/UserMinus.vue'
 
