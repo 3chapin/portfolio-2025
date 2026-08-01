@@ -3,7 +3,6 @@ import { ref } from 'vue'
 
 describe('useCyberDiceGame', () => {
 	// Mock functions for the composable
-	const transition = ref(false)
 	const dragging = ref(false)
 	const showTransition = () => {}
 	const hideTransition = () => {}
@@ -14,7 +13,6 @@ describe('useCyberDiceGame', () => {
 	const unfocusInput = () => {}
 
 	const { gameData, addPlayer, removePlayer } = useCyberDiceGame(
-		transition,
 		dragging,
 		showTransition,
 		hideTransition,
