@@ -33,17 +33,17 @@ defineProps({
 				:class="`grid grid-rows-1 rounded backdrop-blur-md ${smallWidth} ${height} sm:${bigWidth} border-3 border-fuchsia-400 items-center justify-center group-hover:hover:animate-pulseCard transition-all transition-discrete duration-200 group-active:bg-cyan-200/25`"
 			>
 				<h2
-					class="col-start-1 row-start-1 w-fit text-lg font-mono p-4 text-cyan-300 transition-all transition-discrete duration-200 group-hover:animate-pulseCard"
+					class="col-start-1 row-start-1 w-fit text-6xl text-center font-bold font-mono p-4 text-cyan-300 transition-all transition-discrete duration-200 group-hover:animate-pulseCard"
 				>
 					{{ name }}
 				</h2>
 				<h2
-					class="col-start-1 row-start-1 w-fit ml-[1.5px] text-lg font-mono p-4 text-fuchsia-400 transition-all transition-discrete duration-200 group-hover:animate-pulseCard"
+					class="col-start-1 row-start-1 w-fit ml-[1.5px] text-6xl text-center font-bold font-mono p-4 text-fuchsia-400 transition-all transition-discrete duration-200 group-hover:animate-pulseCard"
 				>
 					{{ name }}
 				</h2>
 				<h2
-					class="col-start-1 row-start-1 w-fit text-lg font-mono p-4 text-cyan-300 blur-sm"
+					class="col-start-1 row-start-1 w-fit text-6xl text-center font-bold font-mono p-4 text-cyan-300 blur-sm"
 				>
 					{{ name }}
 				</h2>

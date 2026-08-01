@@ -1,4 +1,4 @@
-export function setFavicon(href: string) {
+export const setFavicon = (href: string) => {
 	let link = document.querySelector(
 		"link[rel~='icon']",
 	) as HTMLLinkElement | null

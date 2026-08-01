@@ -1,7 +1,13 @@
 @import 'tailwindcss';
 
+@font-face {
+	font-family: 'GNF';
+	src: url('/fonts/GNF.ttf') format('truetype');
+}
+
 @theme {
 	--font-sans: InterVariable, sans-serif;
+	--font-mono: 'GNF', monospace;
 	--animate-pulseHeader: pulseHeader 7s linear 0s infinite alternate none
 		running;
 	--animate-pulseCard: pulseCard 1.2s linear 0s infinite alternate none running;

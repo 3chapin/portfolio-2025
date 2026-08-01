@@ -1,5 +1,5 @@
 <script setup>
-import CyberDice from '@/components/CyberDice.vue'
+import CyberDice from '@/components/cyberDiceGame/CyberDice.vue'
 </script>
 
 <template>

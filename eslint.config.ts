@@ -2,6 +2,7 @@ import js from '@eslint/js'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
+import pluginVitestGlobals from 'eslint-plugin-vitest-globals'
 import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
@@ -21,5 +22,9 @@ export default defineConfig([
 	{
 		files: ['**/*.vue'],
 		languageOptions: { parserOptions: { parser: tseslint.parser } },
+	},
+	{
+		files: ['src/tests/**/*.{spec,test}.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue}'],
+		...pluginVitestGlobals.configs['flat/recommended'],
 	},
 ])
