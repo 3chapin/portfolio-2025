@@ -1,7 +1,7 @@
 import { afterEach } from 'vitest'
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
-import CyberDice from '@/components/CyberDice.vue'
+import CyberDice from '@/components/cyberDiceGame/CyberDice.vue'
 
 const startedGameData = {
 	setupStep: 2,
