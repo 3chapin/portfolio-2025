@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CyberText from './CyberText.vue'
+import CyberText from '@/components/CyberText.vue'
 const props = defineProps({
 	show: { type: Boolean, required: true },
 	type: { type: String, default: '' },
@@ -15,8 +15,8 @@ defineEmits(['confirm', 'cancel'])
 	>
 		<div class="flex flex-col items-center w-full max-w-85 p-0">
 			<CyberText
-				value="are-you-sure?"
-				size="text-2xl"
+				value="are you sure?"
+				size="text-4xl"
 				text-margin="ml-[4px]"
 				class="animate-pulseHeader mb-4 mt-2"
 			/>
@@ -28,22 +28,22 @@ defineEmits(['confirm', 'cancel'])
 				class="flex flex-col items-center gap-y-7 w-full justify-center mt-10"
 			>
 				<button
-					class="px-4 py-2 w-full rounded font-mono font-semibold bg-gray-950 text-white border-2 cursor-pointer border-white hover:bg-gray-900 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					class="px-4 py-2 w-full text-xl rounded font-mono font-semibold bg-gray-950 text-white border-2 cursor-pointer border-white hover:bg-gray-900 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 					@click="$emit('confirm', props.type)"
 					@touchstart="() => {}"
 				>
 					{{
 						props.type === 'restart'
-							? 'restart-game'
+							? 'restart game'
 							: props.type === 'setup'
-								? 'change-setup'
+								? 'change setup'
 								: props.type === 'quit'
-									? 'quit-game'
+									? 'quit game'
 									: ''
 					}}
 				</button>
 				<button
-					class="px-4 py-2 w-full max-w-85 rounded font-mono font-semibold bg-gray-950 text-gray-400 border-2 cursor-pointer border-gray-600 hover:bg-gray-900 active:text-white active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					class="px-4 py-2 w-full text-xl max-w-85 rounded font-mono font-semibold bg-gray-950 text-gray-400 border-2 cursor-pointer border-gray-600 hover:bg-gray-900 active:text-white active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 					@click="$emit('cancel')"
 					@touchstart="() => {}"
 				>

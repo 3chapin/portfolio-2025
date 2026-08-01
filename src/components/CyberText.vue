@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useOrdinal } from '@/composables/ordinal'
+import { useOrdinal } from '@/composables/useOrdinal'
 
 withDefaults(
 	defineProps<{

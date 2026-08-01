@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-export function useFlashOverlay() {
+export const useFlashOverlay = () => {
 	const flashing = ref(false)
 
 	/**

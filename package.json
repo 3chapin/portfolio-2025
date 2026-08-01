@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
+		"test": "vitest --coverage",
 		"build": "vue-tsc -b && vite build",
 		"preview": "vite preview",
 		"postbuild": "cp public/CNAME dist/CNAME",
@@ -22,19 +23,34 @@
 		"@eslint/js": "^9.39.1",
 		"@types/node": "^24.6.0",
 		"@vitejs/plugin-vue": "^6.0.1",
+		"@vitest/coverage-v8": "^4.1.10",
+		"@vue/test-utils": "^2.2.7",
 		"@vue/tsconfig": "^0.8.1",
-		"eslint": "^9.39.1",
+		"eslint": "^10.8.0",
 		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-vitest-globals": "^1.6.1",
 		"eslint-plugin-vue": "^10.5.1",
 		"gh-pages": "^6.3.0",
 		"globals": "^16.5.0",
 		"jiti": "^2.6.1",
+		"jsdom": "^29.1.1",
 		"prettier": "^3.6.2",
 		"typescript": "~5.9.3",
 		"typescript-eslint": "^8.46.3",
 		"vite": "^7.1.7",
 		"vite-plugin-vue-devtools": "^8.0.3",
+		"vitest": "^4.1.10",
 		"vue": "^3.5.24",
-		"vue-tsc": "^3.1.0"
+		"vue-tsc": "^3.3.8"
+	},
+	"overrides": {
+		"@trickfilm400/rollup-plugin-off-main-thread": {
+			"ejs": "6.0.1"
+		},
+		"ejs": "6.0.1",
+		"filelist": "2.0.2",
+		"jake": "12.10.1",
+		"minimatch": "10.2.6",
+		"brace-expansion": "5.0.8"
 	}
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CyberText from './CyberText.vue'
+import CyberText from '@/components/CyberText.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 // Props for gameData, playerRankings, isMobileDevice
@@ -145,7 +145,7 @@ onUnmounted(() => {
 			isMobileDevice === false ? 'py-12' : '',
 			step === 1 ? '' : 'justify-center',
 		]"
-		class="fixed inset-0 z-60 pb-26 bg-gray-950/90 backdrop-blur-sm overflow-hidden flex flex-col items-center py-2 px-6"
+		class="fixed inset-0 z-60 pb-26 bg-gray-950 backdrop-blur-sm overflow-hidden flex flex-col items-center py-2 px-6"
 	>
 		<!-- Firework Canvas Background -->
 		<canvas
@@ -163,17 +163,17 @@ onUnmounted(() => {
 			>
 				<CyberText
 					id="game-over-text"
-					size="text-2xl"
+					size="text-7xl"
 					text-margin="ml-[4px]"
-					:value="'game-over'"
+					:value="'game over'"
 					class="mt-10 animate-pulseHeader"
 				/>
 
-				<p class="mt-5 font-mono font-semibold text-white text-lg">
-					{{ playerRankings[0]?.name }}-wins!
+				<p class="mt-8 font-mono font-bold text-white text-3xl">
+					{{ playerRankings[0]?.name }} wins!
 				</p>
-				<p class="mt-2 font-mono font-medium text-white text">
-					{{ playerRankings[0]?.score.toLocaleString() }}-points
+				<p class="mt-4 font-mono font-bold text-white text-xl">
+					{{ playerRankings[0]?.score.toLocaleString() }} points
 				</p>
 				<div
 					ref="scoreboard-game-over"
@@ -189,9 +189,10 @@ onUnmounted(() => {
 							)"
 							:key="player.id"
 							:class="index % 2 === 1 ? 'bg-gray-900/70' : ''"
-							class="flex flex-row rounded items-center min-h-14 max-h-14 mx-0.5 justify-between text-center px-3 transition-all duration-400"
+							class="flex flex-row rounded items-center min-h-14 max-h-14 mx-0.5 justify-between text-center px-1 transition-all duration-400"
 						>
 							<CyberText
+								size="text-xl"
 								text-margin="ml-[3px]"
 								:value="player.rank + ' ' + player.name"
 							/>
@@ -199,10 +200,10 @@ onUnmounted(() => {
 								id="player-score-info"
 								class="flex flex-col h-full gap-y-1.5 justify-center items-end self-stretch"
 							>
-								<p class="text-white font-mono text-base">
+								<p class="text-white font-mono text-lg font-bold">
 									{{ player.score.toLocaleString() }}
 								</p>
-								<p class="text-gray-600 font-mono text-sm">
+								<p class="text-gray-600 font-mono font-bold">
 									{{
 										(player.score - playerRankings[0]!.score).toLocaleString()
 									}}
@@ -220,7 +221,7 @@ onUnmounted(() => {
 						name="next-game-over"
 						@click="() => (step = 2)"
 						@touchstart="() => {}"
-						class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+						class="text-white text-xl font-bold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 					>
 						next
 					</button>
@@ -238,33 +239,33 @@ onUnmounted(() => {
 					name="back-game-over"
 					@click="() => (step = 1)"
 					@touchstart="() => {}"
-					class="text-gray-500 font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-gray-500 hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					class="text-gray-500 text-xl font-bold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-gray-500 hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 				>
-					back-to-scoreboard
+					back to scoreboard
 				</button>
 				<button
 					name="play-again-button"
 					@click="() => emit('restartGame')"
 					@touchstart="() => {}"
-					class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					class="text-white text-xl font-bold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 				>
-					play-again
+					play again
 				</button>
 				<button
 					name="back-to-setup-button"
 					@click="() => emit('goBackToSetup')"
 					@touchstart="() => {}"
-					class="text-white font-semibold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
+					class="text-white text-xl font-bold bg-gray-950 px-3 w-full rounded min-h-12 self-center font-mono cursor-pointer border-2 border-white hover:bg-gray-800 active:border-2 active:border-fuchsia-400 active:ring-2 active:ring-cyan-300"
 				>
-					change-setup
+					change setup
 				</button>
 				<button
 					name="quit-game-button"
 					@click="() => emit('quitGame')"
 					@touchstart="() => {}"
-					class="font-semibold bg-gray-950 rounded w-full min-h-12 self-center font-mono cursor-pointer border-2 hover:bg-gray-800 active:border-2border-red-400 text-red-400 active:border-red-400 active:ring-red-400 active:ring-2"
+					class="text-red-400 text-xl font-bold bg-gray-950 rounded w-full min-h-12 self-center font-mono cursor-pointer border-2 hover:bg-gray-800 active:border-2 active:border-red-400 active:ring-red-400 active:ring-2"
 				>
-					quit-game
+					quit game
 				</button>
 			</div>
 		</Transition>
