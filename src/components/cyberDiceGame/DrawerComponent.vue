@@ -51,7 +51,7 @@ const openOther = (type: drawerTypes) => {
 				@click="handleClose"
 				@touchstart="() => {}"
 				:class="props.drawerType === 'options' ? 'w-full' : ''"
-				class="flex flex-row group items-center w-fit gap-x-2 justify-center text-gray-500 font-bold bg-gray-950 rounded p-3 text-xl self-center font-mono cursor-pointer hover:bg-gray-900 active:bg-gray-800 active:text-white"
+				class="flex flex-row group items-center w-fit gap-x-2 max-h-12 justify-center text-gray-500 font-bold bg-gray-950 rounded p-3 text-xl self-center font-mono cursor-pointer hover:bg-gray-900 active:bg-gray-800 active:text-white"
 			>
 				<span class="text-2xl">x</span>
 				{{ props.drawerType === 'options' ? 'close' : '' }}
