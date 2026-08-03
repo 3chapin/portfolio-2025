@@ -2,7 +2,7 @@
 
 <template>
 	<header
-		class="bg-gray-950 border-b-3 border-gray-900 z-10 fixed w-full h-fit top-0 flex justify-center p-8"
+		class="bg-gray-950 border-b-3 border-gray-900 z-10 fixed w-full h-fit top-0 flex justify-center py-8 px-6"
 	>
 		<div
 			id="nav-container"
