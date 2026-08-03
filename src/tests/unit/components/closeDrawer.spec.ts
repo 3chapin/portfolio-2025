@@ -32,7 +32,7 @@ describe('closeDrawer', () => {
 		expect(drawer.exists()).toBe(true)
 		expect(drawer.classes()).toContain('translate-y-full')
 
-		await wrapper.find('button[name="enter-"]').trigger('click')
+		await wrapper.find('button[name="enter-roll"]').trigger('click')
 
 		expect(drawer.classes()).toContain('translate-y-0')
 		expect(wrapper.find('#overlay').exists()).toBe(true)
