@@ -35,7 +35,7 @@
 					</div>
 				</div>
 			</div>
-			<p class="text-gray-600 text-lg font-mono italic">
+			<p class="text-gray-600 text-xl font-mono italic">
 				nearby, a neon sign hums weakly...
 			</p>
 		</div>
