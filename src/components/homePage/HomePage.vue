@@ -10,10 +10,7 @@ import ProjectCard from '@/components/homePage/ProjectCard.vue'
 			<div
 				class="flex flex-row flex-wrap gap-10 py-1 min-h-full justify-center"
 			>
-				<ProjectCard
-					name="cyber dice"
-					:link="'cyber.' + import.meta.env.BASE_URL"
-				/>
+				<ProjectCard name="cyber dice" link="cyber.mjlowell.com" />
 			</div>
 		</div>
 	</main>
