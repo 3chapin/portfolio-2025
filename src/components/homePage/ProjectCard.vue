@@ -25,7 +25,7 @@ defineProps({
 
 <template>
 	<!-- I want to make the color of the card a little random based on the id of the object in it -->
-	<a id="card" href="https://{{ link }}">
+	<a id="card" :href="`https://${link}`">
 		<div
 			:class="`rounded-br-none rounded-lg bg-gray-950 ${smallWidth} ${height} sm:${bigWidth} border-3 group hover:border-4 duration-200 cursor-pointer border-cyan-300`"
 		>
